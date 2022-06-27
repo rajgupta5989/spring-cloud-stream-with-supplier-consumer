@@ -1,0 +1,80 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5674
+    username: guest
+    password: guest
+  cloud:
+    stream:
+      rabbit:
+        bindings:
+          A-processDeviceEvent1-in-0:
+            consumer:
+              bindingRoutingKey: A
+            maxConcurrency: 5
+          B-processDeviceEvent1-in-0:
+            maxConcurrency: 5
+            consumer:
+              bindingRoutingKey: B
+          C-processDeviceEvent1-in-0:
+            maxConcurrency: 5
+            consumer:
+              bindingRoutingKey: C
+          A-processDeviceEvent2-in-0:
+            consumer:
+              bindingRoutingKey: A
+            maxConcurrency: 5
+          B-processDeviceEvent2-in-0:
+            maxConcurrency: 5
+            consumer:
+              bindingRoutingKey: B
+          C-processDeviceEvent2-in-0:
+            maxConcurrency: 5
+            consumer:
+              bindingRoutingKey: C
+          sendMessage-out-0:
+            producer:
+              routingKeyExpression: headers['ROUTING-KEY']
+          sendMessage2-out-0:
+            producer:
+              routingKeyExpression: headers['ROUTING-KEY']
+      function:
+        definition: processDeviceEvent1;processDeviceEvent2
+      bindings:
+        sendMessage-out-0:
+          destination: fizz-buzz
+        sendMessage2-out-0:
+          destination: buzz-fizz
+        A-processDeviceEvent2-in-0:
+          destination: buzz-fizz
+          consumer:
+            concurrency: 4
+        B-processDeviceEvent2-in-0:
+          destination: buzz-fizz
+          consumer:
+            concurrency: 4
+        C-processDeviceEvent2-in-0:
+          destination: buzz-fizz
+          consumer:
+            concurrency: 4
+        A-processDeviceEvent1-in-0:
+          destination: fizz-buzz
+          consumer:
+            concurrency: 4
+        B-processDeviceEvent1-in-0:
+          destination: fizz-buzz
+          consumer:
+            concurrency: 4
+        C-processDeviceEvent1-in-0:
+          destination: fizz-buzz
+          consumer:
+            concurrency: 4
+      source: sendMessage;sendMessage2
+
+
+config:
+  function:
+    list:
+      - A
+      - B
+      - C
